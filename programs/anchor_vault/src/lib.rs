@@ -20,6 +20,11 @@ pub mod anchor_vault {
         ctx.accounts.withdraw(amount)?;
         Ok(())
     }
+
+    pub fn close(ctx: Context<Close>) -> Result<()> {
+        ctx.accounts.close()?;
+        Ok(())
+    }
 }
 
 #[derive(Accounts)]
@@ -155,7 +160,7 @@ pub struct Close<'info> {
 impl<'info> Close<'info> {
     pub fn close(&mut self) -> Result<()> {
 
-        let cpi_program = self.system_program.to_account_info();
+        let cpi_program: AccountInfo = self.system_program.to_account_info();
 
         let cpi_accounts = Transfer {
             from: self.vault.to_account_info(),

@@ -15,7 +15,7 @@ describe("anchor_vault", () => {
 
   const amount = new BN( 10 * anchor.web3.LAMPORTS_PER_SOL);
 
-  it("should initialize, deposit, and withdraw from the vault", async () => {
+  it("should initialize, deposit, withdraw, and close the vault", async () => {
     // Add your test here.
     let balance = await connection.getBalance(provider.wallet.publicKey);
     console.log("Balance: ", balance / anchor.web3.LAMPORTS_PER_SOL);
@@ -60,5 +60,20 @@ describe("anchor_vault", () => {
     console.log("Vault balance: ", (vaultBalance) / anchor.web3.LAMPORTS_PER_SOL);
     expect(vaultBalance).to.equal(0);
     console.log("--------------------");
+
+    console.log("Closing the vault");
+    const tx_close = await program.methods.close().rpc();
+
+    const vaultAccountInfo = await connection.getAccountInfo(vaultPda);
+    const vaultStateAccountInfo = await connection.getAccountInfo(vaultStatePda);
+  
+    console.log("Vault account exists:", vaultAccountInfo !== null);
+    console.log("VaultState account exists:", vaultStateAccountInfo !== null);
+  
+    // Add assertions
+    expect(vaultAccountInfo).to.be.null;
+    expect(vaultStateAccountInfo).to.be.null;
+  
+    console.log("--------------------");  
   });
 });
